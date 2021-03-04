@@ -7,9 +7,13 @@ namespace ClassLibrary
 {
     public class WordList
     {
+        //Fields
+        private static readonly string folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Labb4WorkShopApp"); //TODO: Change Labb4WorkShopApp
+
         //Auto-implemented properties
-        public string Name { get; }             //Namnet på listan
-        public string[] Languages { get; }      //Namnen på språken
+        public string Name { get; }                     //Namnet på listan
+        public string[] Languages { get; }              //Namnen på språken
+        private List<Word> Words { get; set; }          //Lista av typ Word
 
         //Constructor
         public WordList(string name, params string[] languages)
@@ -21,14 +25,42 @@ namespace ClassLibrary
                 Languages[i] = languages[i];
             }
         }
+
         //Methods
         public static string[] GetLists()//Markus
         {
-            return new string[] { "No lists implemented" };     //Returnerar array med namn på alla listor som finns lagrade (utan filändelsen). 
+            string[] files = Directory.GetFiles(folder, "*.dat", SearchOption.AllDirectories);
+            string[] nameArray = new string[files.Length];
+
+            for (int i = 0; i < files.Length; i++)
+            {
+                nameArray[i] = Path.GetFileNameWithoutExtension(files[i]);
+            }
+
+            return nameArray;    //Returnerar array med namn på alla listor som finns lagrade (utan filändelsen). 
         }
         public static WordList LoadList(string name)// Kamil
         {
-            return new WordList("Test", "Test");                //Laddar in ordlistan (name anges utan filändelse) och returnerar som WordList.
+            if (File.Exists(Path.Combine(folder, name + ".dat")))
+            {
+                string[] content = File.ReadAllLines(Path.Combine(folder, name + ".dat"));
+                string[] languages = content[0].Split(';', StringSplitOptions.RemoveEmptyEntries);
+                WordList wordList = new WordList(name, languages);
+                wordList.Words = new List<Word>();
+
+                for (int i = 1; i < content.Length; i++)
+                {
+                    wordList.Words.Add(new Word(content[i].Split(';', StringSplitOptions.RemoveEmptyEntries)));
+                }
+
+                return wordList;    //Laddar in ordlistan (name anges utan filändelse) och returnerar som WordList.
+            }
+            else
+            {
+                Console.WriteLine("The file does not exist"); //Fix later
+
+                return new WordList("Test", "Test");
+            }
         }
         public void Save()//Markus
         {
@@ -37,6 +69,15 @@ namespace ClassLibrary
         public void Add(params string[] translations)//Kamil
         {
             //Lägger till ord i listan. Kasta ArgumentException om det är fel antal translations.
+            Console.WriteLine("Enter a new word in {0}", Languages[0]);
+            using (var sw = new StreamWriter(Name, true))
+            {
+                foreach (var tranlation in translations)
+                {
+
+                }
+            }
+            throw new ArgumentException("Incorrect number of translations added");
         }
         public bool Remove(int translation, string word)//markus
         {
