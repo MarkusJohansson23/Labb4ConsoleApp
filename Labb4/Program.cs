@@ -14,7 +14,7 @@ namespace Labb4
             in olika argument till programmet. Om man inte skickar några argument (eller
             felaktiga argument) ska följande skrivas ut: */
 
-            var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             var path = Path.Combine(appDataPath, @"Labb4WorkShopApp");                      //<-- DON'T Forget to change this after done with draft
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
@@ -29,6 +29,8 @@ namespace Labb4
             Console.WriteLine("-practice <listname>");
 
             var wordTest = new Word("test", "2", "bla", "Extra ord");
+            var wordList = new WordList("Swedish", "Swedish", "English");
+            WordList.GetLists();
             Console.ReadKey();
         }
     }

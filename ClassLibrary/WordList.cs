@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace ClassLibrary
@@ -20,10 +21,21 @@ namespace ClassLibrary
                 Languages[i] = languages[i];
             }
         }
+        
         //Methods
         public static string[] GetLists()//Markus
         {
-            return new string[] { "No lists implemented" };     //Returnerar array med namn på alla listor som finns lagrade (utan filändelsen). 
+            var fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Labb4WorkShopApp"); //TODO: Change Labb4WorkShopApp
+            string[] files = Directory.GetFiles(fileName, "*.dat", SearchOption.AllDirectories);
+            string[] nameArray = new string[files.Length];
+
+            foreach (var item in files)
+            {
+                string name = Path.GetFileNameWithoutExtension(item);
+                Console.WriteLine(name);
+            }
+
+            return nameArray;    //Returnerar array med namn på alla listor som finns lagrade (utan filändelsen). 
         }
         public static WordList LoadList(string name)// Kamil
         {
@@ -39,6 +51,7 @@ namespace ClassLibrary
         }
         public bool Remove(int translation, string word)//markus
         {
+
             return false;                                       //translation motsvarar index i Languages. Sök igenom språket och ta bort ordet.
         }
         public int Count()//Kamil
