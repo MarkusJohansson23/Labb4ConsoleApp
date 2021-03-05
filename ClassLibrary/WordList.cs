@@ -11,7 +11,7 @@ namespace ClassLibrary
         private static readonly string folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Labb4WorkShopApp"); //TODO: change Labb4WorkShopApp
         public string Name { get; }             //Namnet på listan
         public string[] Languages { get; }      //Namnen på språken
-
+        private List<Word> Words { get; set; }
         //Constructor
         public WordList(string name, params string[] languages)
         {
@@ -43,6 +43,19 @@ namespace ClassLibrary
         }
         public void Save()//Markus
         {
+            if (!File.Exists(Path.Combine(folder, Name + ".dat")))
+            {
+                File.Create(Path.Combine(folder, Name + ".dat"));
+            }
+
+            using (var sw = new StreamWriter(Path.Combine(folder, Name + ".dat")))
+            {
+                sw.WriteLine(string.Join(";", Languages));
+                for (int i = 0; i < Words.Count; i++)
+                {
+                    sw.WriteLine(string.Join(";", Words[i].Translations));
+                }
+            }
             /*if(File.Exist(folder))
              * Print "File with this name alreary exists. Do you want to overwrite it?"
              * if("yes") --> overwrite
