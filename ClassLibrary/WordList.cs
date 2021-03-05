@@ -64,6 +64,20 @@ namespace ClassLibrary
         }
         public void Save()//Markus
         {
+            if (!File.Exists(Path.Combine(folder, Name + ".dat")))
+            {
+                File.Create(Path.Combine(folder, Name + ".dat"));
+            }
+
+            using (var sw = new StreamWriter(Path.Combine(folder, Name + ".dat")))
+            {
+                sw.WriteLine(string.Join(";", Languages));
+                for (int i = 0; i < Words.Count; i++)
+                {
+                    sw.WriteLine(string.Join(";", Words[i].Translations));
+                }
+            }
+
             //Sparar listan till en fil med samma namn som listan och filändelse .dat
         }
         public void Add(params string[] translations)//Kamil
