@@ -8,6 +8,7 @@ namespace ClassLibrary
     public class WordList
     {
         //Auto-implemented properties
+        private static readonly string folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Labb4WorkShopApp"); //TODO: change Labb4WorkShopApp
         public string Name { get; }             //Namnet på listan
         public string[] Languages { get; }      //Namnen på språken
 
@@ -25,14 +26,13 @@ namespace ClassLibrary
         //Methods
         public static string[] GetLists()//Markus
         {
-            var folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Labb4WorkShopApp"); //TODO: Change Labb4WorkShopApp
             string[] files = Directory.GetFiles(folder, "*.dat", SearchOption.AllDirectories);
             string[] nameArray = new string[files.Length];
 
             for (int i = 0; i < files.Length; i++)
             {
                 string name = Path.GetFileNameWithoutExtension(files[i]);
-                nameArray[i] = files[i];
+                nameArray[i] = name;
             }
 
             return nameArray;    //Returnerar array med namn på alla listor som finns lagrade (utan filändelsen). 
