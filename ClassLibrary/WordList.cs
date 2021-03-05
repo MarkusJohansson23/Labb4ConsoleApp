@@ -25,14 +25,14 @@ namespace ClassLibrary
         //Methods
         public static string[] GetLists()//Markus
         {
-            var fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Labb4WorkShopApp"); //TODO: Change Labb4WorkShopApp
-            string[] files = Directory.GetFiles(fileName, "*.dat", SearchOption.AllDirectories);
+            var folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Labb4WorkShopApp"); //TODO: Change Labb4WorkShopApp
+            string[] files = Directory.GetFiles(folder, "*.dat", SearchOption.AllDirectories);
             string[] nameArray = new string[files.Length];
 
-            foreach (var item in files)
+            for (int i = 0; i < files.Length; i++)
             {
-                string name = Path.GetFileNameWithoutExtension(item);
-                Console.WriteLine(name);
+                string name = Path.GetFileNameWithoutExtension(files[i]);
+                nameArray[i] = files[i];
             }
 
             return nameArray;    //Returnerar array med namn på alla listor som finns lagrade (utan filändelsen). 
@@ -43,6 +43,11 @@ namespace ClassLibrary
         }
         public void Save()//Markus
         {
+            /*if(File.Exist(folder))
+             * Print "File with this name alreary exists. Do you want to overwrite it?"
+             * if("yes") --> overwrite
+             * if("no") --> break
+             */
             //Sparar listan till en fil med samma namn som listan och filändelse .dat
         }
         public void Add(params string[] translations)//Kamil
