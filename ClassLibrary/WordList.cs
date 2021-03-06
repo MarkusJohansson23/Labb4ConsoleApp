@@ -22,7 +22,7 @@ namespace ClassLibrary
             Languages = new string[languages.Length];
             for (int i = 0; i < languages.Length; i++)
             {
-                Languages[i] = languages[i];
+                Languages[i] = languages[i].ToLower();
             }
         }
 
@@ -88,7 +88,7 @@ namespace ClassLibrary
                 string[] words = new string[Languages.Length];
                 for (int i = 0; i < Languages.Length; i++)
                 {
-                    words[i] = translations[i];
+                    words[i] = translations[i].ToLower();
                 }
                 Words.Add(new Word(words));
             }
