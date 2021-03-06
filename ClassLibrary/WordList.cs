@@ -39,7 +39,7 @@ namespace ClassLibrary
 
             return nameArray;    //Returnerar array med namn på alla listor som finns lagrade (utan filändelsen). 
         }
-        public static WordList LoadList(string name)// Kamil
+        public static WordList LoadList(string name)//Kamil
         {
             if (File.Exists(Path.Combine(folder, name + ".dat")))
             {
@@ -57,7 +57,7 @@ namespace ClassLibrary
             }
             else
             {
-                Console.WriteLine("The file does not exist"); //Fix later
+                Console.WriteLine("The file does not exist"); //Fix later TODO
 
                 return new WordList("Test", "Test");
             }
@@ -69,15 +69,19 @@ namespace ClassLibrary
         public void Add(params string[] translations)//Kamil
         {
             //Lägger till ord i listan. Kasta ArgumentException om det är fel antal translations.
-            Console.WriteLine("Enter a new word in {0}", Languages[0]);
-            using (var sw = new StreamWriter(Name, true))
+            if (Words != null || translations.Length != Languages.Length) //rätt logik?
             {
-                foreach (var tranlation in translations)
+                string[] words = new string[Languages.Length];
+                for (int i = 0; i < Languages.Length; i++)
                 {
-
+                    words[i] = translations[i];
                 }
+                Words.Add(new Word(words));
             }
-            throw new ArgumentException("Incorrect number of translations added");
+            else
+            {
+                throw new ArgumentException("Incorrect number of translations added");
+            }
         }
         public bool Remove(int translation, string word)//markus
         {

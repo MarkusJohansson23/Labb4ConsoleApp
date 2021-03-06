@@ -30,10 +30,8 @@ namespace Labb4
             Console.WriteLine("-count <listname>");
             Console.WriteLine("-practice <listname>");
             Console.WriteLine();
-            var testTest = new WordList("example1", "swedish", "english");
-            testTest.Add("bla bla");
             var test = WordList.LoadList("example");
-            var test2 = WordList.LoadList("lang3");
+            test.Add("cat", "katt");
             Console.ReadKey();
         }
     }
