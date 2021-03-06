@@ -36,7 +36,7 @@ namespace ClassLibrary
             {
                 nameArray[i] = Path.GetFileNameWithoutExtension(files[i]);
             }
-
+                                  
             return nameArray;    //Returnerar array med namn på alla listor som finns lagrade (utan filändelsen). 
         }
         public static WordList LoadList(string name)//Kamil
@@ -81,7 +81,10 @@ namespace ClassLibrary
         public void Add(params string[] translations)//Kamil
         {
             //Lägger till ord i listan. Kasta ArgumentException om det är fel antal translations.
-            if (Words != null || translations.Length != Languages.Length)   //rätt logik? Kan vi skapa en WordList object med null Words?
+            if (Words == null)
+                throw new ArgumentNullException("No Word objects found");
+
+            if (translations.Length != Languages.Length)
             {
                 string[] words = new string[Languages.Length];
                 for (int i = 0; i < Languages.Length; i++)
@@ -103,8 +106,8 @@ namespace ClassLibrary
         {
             if (Words != null)
             {
-                return Words.Count;                             //TODO, Inte helt hundra på att det är de vi vill få ut.
-            }                                                   //De kanske vill ha Words.Count * Languages.Length istället.
+                return Words.Count;                             //TODO, Inte helt hundra på att det är rätt
+            }                                                   //Ska vi få ut Words.Count * Languages.Length istället?
             return 0;                                           //Räknar och returnerar antal ord i listan.
         }
         public void List(int sortByTranslation, Action<string[]> showTranslations)//markus
@@ -126,7 +129,7 @@ namespace ClassLibrary
                 return new Word(fromLanguages, toLanguages, Words[rng.Next(Words.Count)].Translations);
             }
             //Returnerar slumpmässigt Word från listan, med slumpmässigt valda FromLanguage och ToLanguage(dock inte samma).
-            throw new ArgumentNullException("No Word objects found in List");                            
+            throw new ArgumentNullException("No Word objects found");                            
 
         }
     }
