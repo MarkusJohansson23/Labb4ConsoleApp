@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "Labb4": {
-      "commandName": "Project",
-      "commandLineArgs": "-add lang3"
-    }
-  }
-}

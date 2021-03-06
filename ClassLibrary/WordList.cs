@@ -57,9 +57,7 @@ namespace ClassLibrary
             }
             else
             {
-                Console.WriteLine("The file does not exist"); //Fix later TODO
-
-                return new WordList("Test", "Test");
+                throw new ArgumentException("Could not find path");             //Should be good now. Keeping comment just in case.
             }
         }
         public void Save()//Markus
@@ -83,7 +81,7 @@ namespace ClassLibrary
         public void Add(params string[] translations)//Kamil
         {
             //Lägger till ord i listan. Kasta ArgumentException om det är fel antal translations.
-            if (Words != null || translations.Length != Languages.Length) //rätt logik?
+            if (Words != null || translations.Length != Languages.Length)   //rätt logik? Kan vi skapa en WordList object med null Words?
             {
                 string[] words = new string[Languages.Length];
                 for (int i = 0; i < Languages.Length; i++)
@@ -94,7 +92,7 @@ namespace ClassLibrary
             }
             else
             {
-                throw new ArgumentException("Incorrect number of translations added");
+                throw new ArgumentException("Incorrect number of translations added"); //Kanske snygga till det sen
             }
         }
         public bool Remove(int translation, string word)//markus
@@ -103,6 +101,10 @@ namespace ClassLibrary
         }
         public int Count()//Kamil
         {
+            if (Words != null)
+            {
+                return Words.Count;                             //TODO, Inte helt hundra på att det är de vi vill få ut.
+            }                                                   //De kanske vill ha Words.Count * Languages.Length istället.
             return 0;                                           //Räknar och returnerar antal ord i listan.
         }
         public void List(int sortByTranslation, Action<string[]> showTranslations)//markus
@@ -112,7 +114,19 @@ namespace ClassLibrary
         }
         public Word GetWordToPractice()//Kamil
         {
-            return new Word("Test");                            //Returnerar slumpmässigt Word från listan, med slumpmässigt valda FromLanguage och ToLanguage(dock inte samma).
+            Random rng = new Random();
+            if (Words != null)
+            {
+                int fromLanguages = rng.Next(Languages.Length), toLanguages = rng.Next(Languages.Length);
+                while (fromLanguages == toLanguages)
+                {
+                    fromLanguages = rng.Next(Languages.Length);
+                    toLanguages = rng.Next(Languages.Length);
+                }
+                return new Word(fromLanguages, toLanguages, Words[rng.Next(Words.Count)].Translations);
+            }
+            //Returnerar slumpmässigt Word från listan, med slumpmässigt valda FromLanguage och ToLanguage(dock inte samma).
+            throw new ArgumentNullException("No Word objects found in List");                            
 
         }
     }
