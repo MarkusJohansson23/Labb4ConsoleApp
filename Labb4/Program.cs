@@ -23,9 +23,9 @@ namespace Labb4
             bool flag = true;
             while (flag)
             {
-                string[] parameters = Console.ReadLine().Split(' ');
+                string[] parameters = Console.ReadLine().Split(' ', StringSplitOptions.RemoveEmptyEntries);
                 Console.WriteLine(new string('-', 70));
-                switch (parameters[0].ToLower())
+                switch (parameters[0].ToLower())                                                        //Don't forget that the remaining array is not ToLower();
                 {
                     case "-lists":
                         Console.WriteLine(string.Join(Environment.NewLine, WordList.GetLists()));
@@ -34,16 +34,53 @@ namespace Labb4
                     case "-new":
                         break;
                     case "-add":
-
                         if (parameters.Length > 1)
                         {
 
                         }
                         else
                         {
-                            Console.WriteLine("Input list name without .dat");
+                            Console.Write("Input list name without the .dat extension: ");
+                            string name = Console.ReadLine();
+                            var wordList = WordList.LoadList(name);                                     //Might encapsulate this for later reuse 
+                            int counter = 0;
+                            bool condition = true;
+                            while (condition)
+                            {
+                                string[] translations = new string[wordList.Languages.Length];
+                                for (int i = 0; i < translations.Length; i++)
+                                {
+                                    Console.Write("Input a word in {0}: ", wordList.Languages[i]);
+                                    translations[i] = Console.ReadLine();
+                                    if (translations[i] == " ")
+                                    {
+                                        condition = false;
+                                        break;
+                                    }
+                                }
+                                if (translations[0] != " ")
+                                {
+                                    wordList.Add(translations);
+                                    counter++;
+                                }
+                            }
+                            Console.WriteLine("\n{0} Word object(s) added to the list.", counter);      //Fix later with tryparse
+                            Console.Write("Do you wish to save (y/n): ");
+                            string save = Console.ReadLine().ToLower();
+                            switch (save)
+                            {
+                                case "y":                                   //add yes and/or variations of y
+                                    wordList.Save();
+                                    break;
+                                case "n":                                   //add no and/or variations of n
+                                    break;
+                                default:
+                                    Console.WriteLine("Invalid input");
+                                    break;
+                            }
+                            Console.WriteLine(new string('-', 70));
+                            ShowOptions();
                         }
-                        Console.WriteLine();
                         break;
                     case "-remove":
                         break;
@@ -68,6 +105,7 @@ namespace Labb4
         private static void ShowOptions()
         {
             Console.WriteLine("Use any of the following parameters:");
+            Console.WriteLine(new string('-', 70));
             Console.WriteLine("-lists");
             Console.WriteLine("-new <list name> <language 1> <language 2> .. <language n>");
             Console.WriteLine("-add <list name>");

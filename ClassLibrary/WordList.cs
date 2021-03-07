@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace ClassLibrary
 {
     public class WordList
     {
-        //Fields
+        //Read-only field
         public static readonly string folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Labb4WorkShopApp"); //TODO: Change Labb4WorkShopApp
 
         //Auto-implemented properties
@@ -80,22 +81,21 @@ namespace ClassLibrary
         }
         public void Add(params string[] translations)//Kamil
         {
-            //Lägger till ord i listan. Kasta ArgumentException om det är fel antal translations.
+            //Lägger till ord i listan. Kasta ArgumentException om det är fel antal translations
+
             if (Words == null)
                 throw new ArgumentNullException("No Word objects found");
 
-            if (translations.Length != Languages.Length)
+            translations = translations.Select(x => x.Trim()).ToArray();
+            translations = translations.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+
+            if (translations.Length == Languages.Length)
             {
-                string[] words = new string[Languages.Length];
-                for (int i = 0; i < Languages.Length; i++)
-                {
-                    words[i] = translations[i].ToLower();
-                }
-                Words.Add(new Word(words));
+                Words.Add(new Word(translations.Select(x => x.ToLower()).ToArray()));
             }
             else
             {
-                throw new ArgumentException("Incorrect number of translations added"); //Kanske snygga till det sen
+                throw new ArgumentException("Incorrect number of translations added");
             }
         }
         public bool Remove(int translation, string word)//markus
