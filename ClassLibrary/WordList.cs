@@ -8,7 +8,7 @@ namespace ClassLibrary
     public class WordList
     {
         //Fields
-        private static readonly string folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Labb4WorkShopApp"); //TODO: Change Labb4WorkShopApp
+        public static readonly string folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Labb4WorkShopApp"); //TODO: Change Labb4WorkShopApp
 
         //Auto-implemented properties
         public string Name { get; }                     //Namnet på listan
@@ -130,7 +130,6 @@ namespace ClassLibrary
             }
             //Returnerar slumpmässigt Word från listan, med slumpmässigt valda FromLanguage och ToLanguage(dock inte samma).
             throw new ArgumentNullException("No Word objects found");                            
-
         }
     }
 }
