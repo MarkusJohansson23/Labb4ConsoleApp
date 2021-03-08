@@ -44,6 +44,7 @@ namespace ClassLibrary
         {
             if (File.Exists(Path.Combine(folder, name + ".dat")))
             {
+                //Need to check if there is a content[1] and content[0]
                 string[] content = File.ReadAllLines(Path.Combine(folder, name + ".dat"));
                 string[] languages = content[0].Split(';', StringSplitOptions.RemoveEmptyEntries);
                 WordList wordList = new WordList(name, languages);
@@ -84,10 +85,10 @@ namespace ClassLibrary
             //Lägger till ord i listan. Kasta ArgumentException om det är fel antal translations
 
             if (Words == null)
-                throw new ArgumentNullException("No Word objects found");
+                Words = new List<Word>();
 
-            translations = translations.Select(x => x.Trim()).ToArray();
             translations = translations.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+            translations = translations.Select(x => x.Trim()).ToArray();
 
             if (translations.Length == Languages.Length)
             {
@@ -98,17 +99,18 @@ namespace ClassLibrary
                 throw new ArgumentException("Incorrect number of translations added");
             }
         }
-        public bool Remove(int translation, string word)//markus
+        public bool Remove(int translation, string word)//Markus
         {
-            return false;                                       //translation motsvarar index i Languages. Sök igenom språket och ta bort ordet.
+            return false;
+            //translation motsvarar index i Languages. Sök igenom språket och ta bort ordet.
         }
         public int Count()//Kamil
         {
             if (Words != null)
             {
-                return Words.Count;                             //TODO, Inte helt hundra på att det är rätt
-            }                                                   //Ska vi få ut Words.Count * Languages.Length istället?
-            return 0;                                           //Räknar och returnerar antal ord i listan.
+                return Words.Count;
+            }
+            return 0;
         }
         public void List(int sortByTranslation, Action<string[]> showTranslations)//markus
         {

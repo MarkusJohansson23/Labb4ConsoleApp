@@ -18,66 +18,68 @@ namespace Labb4
             if (!Directory.Exists(WordList.folder))
                 Directory.CreateDirectory(WordList.folder);
 
+            Console.WriteLine(new string('-', 70));
             ShowOptions();
 
             bool flag = true;
             while (flag)
             {
-                string[] parameters = Console.ReadLine().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                string[] parameters = Console.ReadLine()
+                    .Split(new char[] { ' ', '.', ',', ';', '_' }, StringSplitOptions.RemoveEmptyEntries);
+                parameters = Array.ConvertAll(parameters, x => x.ToLower());
+
                 Console.WriteLine(new string('-', 70));
-                switch (parameters[0].ToLower())                                                        //Don't forget that the remaining array is not ToLower();
+                switch (parameters[0].ToLower())
                 {
                     case "-lists":
                         Console.WriteLine(string.Join(Environment.NewLine, WordList.GetLists()));
                         Console.WriteLine(new string('-', 70));
                         break;
                     case "-new":
+                        if (parameters.Length > 1)      //Need to check what happens when null in constructor or out of range. Should still work I think.
+                        {
+                            WordList wordList = new WordList(parameters[1], parameters[2..(parameters.Length)]);
+                            //Is there a way to to make parameters[1] case sensitive?
+                            AddWordsPrompt(wordList);
+                            SavePrompt(wordList);
+                            Console.WriteLine(new string('-', 70));
+                            ShowOptions();
+                        }
+                        else
+                        {
+                            if (parameters.Length > 2) // Fix later
+                            {
+                                //Console.Write("Input list name without the .dat extension: "); for later
+                            }
+                            Console.Write("Input list name without the .dat extension: ");
+                            string name = Console.ReadLine();
+                            Console.Write("Input languages on this line: ");
+                            string[] languages = Console.ReadLine()
+                                .Split(new char[] { ' ', '.', ',', ';', '_' }, StringSplitOptions.RemoveEmptyEntries);
+                            languages = Array.ConvertAll(languages, x => x.ToLower());
+                            WordList wordList = new WordList(name, languages);
+                            AddWordsPrompt(wordList);
+                            SavePrompt(wordList);
+                            Console.WriteLine(new string('-', 70));
+                            ShowOptions();
+                        }
                         break;
                     case "-add":
                         if (parameters.Length > 1)
                         {
-
+                            var wordList = WordList.LoadList(parameters[1]);
+                            AddWordsPrompt(wordList);
+                            SavePrompt(wordList);
+                            Console.WriteLine(new string('-', 70));
+                            ShowOptions();
                         }
                         else
                         {
                             Console.Write("Input list name without the .dat extension: ");
-                            string name = Console.ReadLine();
-                            var wordList = WordList.LoadList(name);                                     //Might encapsulate this for later reuse 
-                            int counter = 0;
-                            bool condition = true;
-                            while (condition)
-                            {
-                                string[] translations = new string[wordList.Languages.Length];
-                                for (int i = 0; i < translations.Length; i++)
-                                {
-                                    Console.Write("Input a word in {0}: ", wordList.Languages[i]);
-                                    translations[i] = Console.ReadLine();
-                                    if (translations[i] == " ")
-                                    {
-                                        condition = false;
-                                        break;
-                                    }
-                                }
-                                if (translations[0] != " ")
-                                {
-                                    wordList.Add(translations);
-                                    counter++;
-                                }
-                            }
-                            Console.WriteLine("\n{0} Word object(s) added to the list.", counter);      //Fix later with tryparse
-                            Console.Write("Do you wish to save (y/n): ");
-                            string save = Console.ReadLine().ToLower();
-                            switch (save)
-                            {
-                                case "y":                                   //add yes and/or variations of y
-                                    wordList.Save();
-                                    break;
-                                case "n":                                   //add no and/or variations of n
-                                    break;
-                                default:
-                                    Console.WriteLine("Invalid input");
-                                    break;
-                            }
+                            string name = Console.ReadLine().ToLower();
+                            var wordList = WordList.LoadList(name);
+                            AddWordsPrompt(wordList);
+                            SavePrompt(wordList);
                             Console.WriteLine(new string('-', 70));
                             ShowOptions();
                         }
@@ -87,10 +89,24 @@ namespace Labb4
                     case "-words":
                         break;
                     case "-count":
+                        if (parameters.Length > 1)
+                        {
+                            var wordList = WordList.LoadList(parameters[1]);
+                            Console.WriteLine("There are {0} Word objects in the {1} list", wordList.Count(), wordList.Name);
+                            Console.WriteLine(new string('-', 70));
+                        }
+                        else
+                        {
+                            Console.Write("Input list name without the .dat extension: ");
+                            string name = Console.ReadLine().ToLower();
+                            var wordList = WordList.LoadList(name);
+                            Console.WriteLine("\nThere are {0} Word objects in the {1} list", wordList.Count(), wordList.Name);
+                            Console.WriteLine(new string('-', 70));
+                        }
                         break;
                     case "-practice":
                         break;
-                    case "-help":
+                    case "-commands":
                         ShowOptions();
                         break;
                     case "-exit":
@@ -113,9 +129,63 @@ namespace Labb4
             Console.WriteLine("-words <listname> <sortByLanguage>");
             Console.WriteLine("-count <listname>");
             Console.WriteLine("-practice <listname>");
-            Console.WriteLine("-help");
+            Console.WriteLine("-commands");
             Console.WriteLine("-exit");
             Console.WriteLine(new string('-', 70));
+        }
+        private static void SavePrompt(WordList wordList)
+        {
+            bool flag = true;
+            Console.Write("Do you wish to save (y/n): ");
+            while (flag)
+            {
+                string save = Console.ReadLine().ToLower();
+                if (save == "y" || save == "yes")
+                {
+                    flag = false;
+                    wordList.Save();
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("{0}.dat was save sucessfully", wordList.Name);
+                    Console.ResetColor();
+                }
+                else if (save == "n" || save == "no")
+                {
+                    flag = false;
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("{0}.dat was not saved", wordList.Name);
+                    Console.ResetColor();
+                }
+                else
+                {
+                    Console.Write("Invalid input. Please type \"yes\" or \"no\": ");
+                }
+            }
+        }
+        private static void AddWordsPrompt(WordList wordList)
+        {
+            int counter = 0;
+            bool condition = true;
+            Console.WriteLine("Press \"space\" then \"enter\" to cancel the prompt below\n");
+            while (condition)
+            {
+                string[] translations = new string[wordList.Languages.Length];
+                for (int i = 0; i < translations.Length; i++)
+                {
+                    Console.Write("Input a word in {0}: ", wordList.Languages[i]);
+                    translations[i] = Console.ReadLine();
+                    if (translations[i] == " ")
+                    {
+                        condition = false;
+                        break;
+                    }
+                }
+                if (translations[0] != " ")
+                {
+                    wordList.Add(translations);
+                    counter++;
+                }
+            }
+            Console.WriteLine("\n{0} Word object(s) added to the list.", counter);
         }
     }
 }
