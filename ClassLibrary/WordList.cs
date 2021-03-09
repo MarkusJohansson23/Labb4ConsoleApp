@@ -12,9 +12,9 @@ namespace ClassLibrary
         public static readonly string folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Labb4WorkShopApp"); //TODO: Change Labb4WorkShopApp
 
         //Auto-implemented properties
-        public string Name { get; }                     //Namnet på listan
-        public string[] Languages { get; }              //Namnen på språken
-        private List<Word> Words { get; set; }          //Lista av typ Word
+        public string Name { get; }
+        public string[] Languages { get; }
+        private List<Word> Words { get; set; }
 
         //Constructor
         public WordList(string name, params string[] languages)
@@ -44,22 +44,28 @@ namespace ClassLibrary
         {
             if (File.Exists(Path.Combine(folder, name + ".dat")))
             {
-                //Need to check if there is a content[1] and content[0]
                 string[] content = File.ReadAllLines(Path.Combine(folder, name + ".dat"));
-                string[] languages = content[0].Split(';', StringSplitOptions.RemoveEmptyEntries);
-                WordList wordList = new WordList(name, languages);
-                wordList.Words = new List<Word>();
-
-                for (int i = 1; i < content.Length; i++)
+                if (content.Length > 0)
                 {
-                    wordList.Words.Add(new Word(content[i].Split(';', StringSplitOptions.RemoveEmptyEntries)));
-                }
+                    string[] languages = content[0].Split(';', StringSplitOptions.RemoveEmptyEntries);
+                    WordList wordList = new WordList(name, languages);
+                    wordList.Words = new List<Word>();
 
-                return wordList;    //Laddar in ordlistan (name anges utan filändelse) och returnerar som WordList.
+                    for (int i = 1; i < content.Length; i++)
+                    {
+                        wordList.Words.Add(new Word(content[i].Split(';', StringSplitOptions.RemoveEmptyEntries)));
+                    }
+
+                    return wordList;    //Laddar in ordlistan (name anges utan filändelse) och returnerar som WordList.
+                }
+                else
+                {
+                    throw new IndexOutOfRangeException("Cannot read file. The file is empty");
+                }
             }
             else
             {
-                throw new ArgumentException("Could not find path");             //Should be good now. Keeping comment just in case.
+                throw new ArgumentException("Could not find path");
             }
         }
         public void Save()//Markus
@@ -77,7 +83,6 @@ namespace ClassLibrary
                     sw.WriteLine(string.Join(";", Words[i].Translations));
                 }
             }
-
             //Sparar listan till en fil med samma namn som listan och filändelse .dat
         }
         public void Add(params string[] translations)//Kamil
@@ -89,6 +94,7 @@ namespace ClassLibrary
 
             translations = translations.Where(x => !string.IsNullOrEmpty(x)).ToArray();
             translations = translations.Select(x => x.Trim()).ToArray();
+            translations = translations.Where(x => !string.IsNullOrEmpty(x)).ToArray();
 
             if (translations.Length == Languages.Length)
             {
@@ -96,7 +102,7 @@ namespace ClassLibrary
             }
             else
             {
-                throw new ArgumentException("Incorrect number of translations added");
+                throw new ArgumentException("Invalid number of translations added");
             }
         }
         public bool Remove(int translation, string word)//Markus
