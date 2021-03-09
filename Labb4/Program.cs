@@ -27,7 +27,7 @@ namespace Labb4
                 counter++;
                 try
                 {
-                    if (counter > 1)
+                    if (counter > 1 || args.Length == 0)
                     {
                         parameters = Console.ReadLine()
                             .Split(new char[] { ' ', '.', ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
