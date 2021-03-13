@@ -70,11 +70,6 @@ namespace ClassLibrary
         }
         public void Save()//Markus
         {
-            if (!File.Exists(Path.Combine(folder, Name + ".dat")))
-            {
-                File.Create(Path.Combine(folder, Name + ".dat"));
-            }
-
             using (var sw = new StreamWriter(Path.Combine(folder, Name + ".dat")))
             {
                 sw.WriteLine(string.Join(";", Languages));

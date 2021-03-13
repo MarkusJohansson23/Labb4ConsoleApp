@@ -16,7 +16,7 @@ namespace Labb4
             string[] parameters = args;
             if (args.Length == 0)
             {
-                Console.WriteLine(new string('-', 70));
+                Console.WriteLine(new string('-', 100));
                 ShowOptions();
             }
 
@@ -30,7 +30,7 @@ namespace Labb4
                     if (counter > 1 || args.Length == 0)
                     {
                         parameters = Console.ReadLine()
-                            .Split(new char[] { ' ', '.', ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
+                            .Split(new char[] { ' ', '.', ',', ';', '<', '>' }, StringSplitOptions.RemoveEmptyEntries);
                     }
 
                     string fileName = string.Empty;
@@ -39,21 +39,34 @@ namespace Labb4
                         fileName = parameters[1];
                     }
                     parameters = Array.ConvertAll(parameters, x => x.ToLower());
-                    Console.WriteLine(new string('-', 70));
+                    Console.WriteLine(new string('-', 100));
 
                     switch (parameters[0])
                     {
                         case "-lists":
                             Console.WriteLine(string.Join(Environment.NewLine, WordList.GetLists()));
-                            Console.WriteLine(new string('-', 70));
+                            Console.WriteLine(new string('-', 100));
                             break;
                         case "-new":
                             if (parameters.Length > 2)
                             {
+                                if (parameters.Length == 3)
+                                {
+                                    Console.WriteLine("We need more languages");
+                                    Console.Write("Input a few more languages on this line (separated by a space): ");
+                                    string[] moreLanguages = Console.ReadLine()
+                                        .Split(new char[] { ' ', '.', ',', ';', '<', '>' }, StringSplitOptions.RemoveEmptyEntries);
+
+                                    Array.Resize(ref parameters, moreLanguages.Length + parameters.Length);
+                                    for (int i = 3; i < parameters.Length; i++)
+                                    {
+                                        parameters[i] = moreLanguages[i - 3];
+                                    }
+                                }
                                 WordList wordList = new WordList(fileName, parameters[2..(parameters.Length)]);
                                 AddWordsPrompt(wordList);
                                 SavePrompt(wordList);
-                                Console.WriteLine(new string('-', 70));
+                                Console.WriteLine(new string('-', 100));
                                 ShowOptions();
                             }
                             else
@@ -64,14 +77,29 @@ namespace Labb4
                                     Console.Write("Input list name without the .dat extension: ");
                                     name = Console.ReadLine();
                                 }
-                                Console.Write("Input languages on this line: ");
+
+                                Console.Write("Input all the languages (separated by a space) on this line: ");
                                 string[] languages = Console.ReadLine()
-                                    .Split(new char[] { ' ', '.', ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
+                                    .Split(new char[] { ' ', '.', ',', ';', '<', '>' }, StringSplitOptions.RemoveEmptyEntries);
+                                if (languages.Length == 1)
+                                {
+                                    Console.WriteLine("\nWe need more languages");
+                                    Console.Write("Input a few more languages on this line (separated by a space): ");
+                                    string[] moreLanguages = Console.ReadLine()
+                                        .Split(new char[] { ' ', '.', ',', ';', '<', '>' }, StringSplitOptions.RemoveEmptyEntries);
+
+                                    Array.Resize(ref languages, moreLanguages.Length + 1);
+                                    for (int i = 1; i < languages.Length; i++)
+                                    {
+                                        languages[i] = moreLanguages[i - 1];
+                                    }
+                                }
+
                                 languages = Array.ConvertAll(languages, x => x.ToLower());
                                 WordList wordList = new WordList(parameters.Length == 2 ? fileName : name, languages);
                                 AddWordsPrompt(wordList);
                                 SavePrompt(wordList);
-                                Console.WriteLine(new string('-', 70));
+                                Console.WriteLine(new string('-', 100));
                                 ShowOptions();
                             }
                             break;
@@ -81,7 +109,7 @@ namespace Labb4
                                 var wordList = WordList.LoadList(fileName);
                                 AddWordsPrompt(wordList);
                                 SavePrompt(wordList);
-                                Console.WriteLine(new string('-', 70));
+                                Console.WriteLine(new string('-', 100));
                                 ShowOptions();
                             }
                             else
@@ -91,7 +119,7 @@ namespace Labb4
                                 var wordList = WordList.LoadList(name);
                                 AddWordsPrompt(wordList);
                                 SavePrompt(wordList);
-                                Console.WriteLine(new string('-', 70));
+                                Console.WriteLine(new string('-', 100));
                                 ShowOptions();
                             }
                             break;
@@ -104,7 +132,7 @@ namespace Labb4
                             {
                                 var wordList = WordList.LoadList(fileName);
                                 Console.WriteLine("There are {0} Word objects in the {1} list", wordList.Count(), wordList.Name);
-                                Console.WriteLine(new string('-', 70));
+                                Console.WriteLine(new string('-', 100));
                             }
                             else
                             {
@@ -112,7 +140,7 @@ namespace Labb4
                                 string name = Console.ReadLine();
                                 var wordList = WordList.LoadList(name);
                                 Console.WriteLine("\nThere are {0} Word objects in the {1} list", wordList.Count(), wordList.Name);
-                                Console.WriteLine(new string('-', 70));
+                                Console.WriteLine(new string('-', 100));
                             }
                             break;
                         case "-practice":
@@ -120,7 +148,7 @@ namespace Labb4
                             {
                                 var wordList = WordList.LoadList(fileName);
                                 PracticeWordsPrompt(wordList);
-                                Console.WriteLine(new string('-', 70));
+                                Console.WriteLine(new string('-', 100));
                                 ShowOptions();
                             }
                             else
@@ -129,7 +157,7 @@ namespace Labb4
                                 string name = Console.ReadLine();
                                 var wordList = WordList.LoadList(name);
                                 PracticeWordsPrompt(wordList);
-                                Console.WriteLine(new string('-', 70));
+                                Console.WriteLine(new string('-', 100));
                                 ShowOptions();
                             }
                             break;
@@ -143,7 +171,7 @@ namespace Labb4
                             Console.WriteLine("Invalid input");
                             if (counter == 1)
                             {
-                                Console.WriteLine(new string('-', 70));
+                                Console.WriteLine(new string('-', 100));
                                 ShowOptions();
                             }
                             break;
@@ -152,25 +180,25 @@ namespace Labb4
                 catch (ArgumentNullException ane)
                 {
                     Console.WriteLine("\n" + ane.Message);
-                    Console.WriteLine(new string('-', 70));
+                    Console.WriteLine(new string('-', 100));
                     ShowOptions();
                 }
                 catch (ArgumentException ae)
                 {
                     Console.WriteLine("\n" + ae.Message);
-                    Console.WriteLine(new string('-', 70));
+                    Console.WriteLine(new string('-', 100));
                     ShowOptions();
                 }
                 catch (IndexOutOfRangeException ioore)
                 {
                     Console.WriteLine("\n" + ioore.Message);
-                    Console.WriteLine(new string('-', 70));
+                    Console.WriteLine(new string('-', 100));
                     ShowOptions();
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine("\n" + e.Message);
-                    Console.WriteLine(new string('-', 70));
+                    Console.WriteLine(new string('-', 100));
                     ShowOptions();
                 } 
             }
@@ -178,7 +206,7 @@ namespace Labb4
         private static void ShowOptions()
         {
             Console.WriteLine("Use any of the following parameters:");
-            Console.WriteLine(new string('-', 70));
+            Console.WriteLine(new string('-', 100));
             Console.WriteLine("-lists");
             Console.WriteLine("-new <list name> <language 1> <language 2> .. <language n>");
             Console.WriteLine("-add <list name>");
@@ -188,7 +216,7 @@ namespace Labb4
             Console.WriteLine("-practice <listname>");
             Console.WriteLine("-options");
             Console.WriteLine("-exit");
-            Console.WriteLine(new string('-', 70));
+            Console.WriteLine(new string('-', 100));
         }
         private static void SavePrompt(WordList wordList)
         {
@@ -222,7 +250,7 @@ namespace Labb4
         {
             int counter = 0;
             bool condition = true;
-            Console.WriteLine("Press \"space\" then \"enter\" to cancel the prompt below\n");
+            Console.WriteLine("Press \"enter\" to cancel the prompt below\n");
             while (condition)
             {
                 string[] translations = new string[wordList.Languages.Length];
@@ -230,19 +258,19 @@ namespace Labb4
                 {
                     Console.Write("Input a word in {0}: ", wordList.Languages[i]);
                     translations[i] = Console.ReadLine();
-                    if (translations[i] == " ")
+                    if (translations[i] == "")
                     {
                         condition = false;
                         break;
                     }
                 }
-                if (translations[0] != " ")
+                if (translations[0] != "")
                 {
                     wordList.Add(translations);
                     counter++;
                 }
             }
-            if (counter == 1) //Check
+            if (counter == 1)
             {
                 Console.WriteLine("\n{0} Word object added to the list", counter);
             }
@@ -255,7 +283,7 @@ namespace Labb4
         {
             bool condition = true;
             int numerator = 0, denominator = 0;
-            Console.WriteLine("Press \"space\" then \"enter\" to cancel the prompt below");
+            Console.WriteLine("Press \"enter\" to cancel the prompt below");
             while (condition)
             {
                 var word = wordList.GetWordToPractice();
@@ -263,7 +291,7 @@ namespace Labb4
                 string fromLanguage = word.Translations[word.FromLanguage];
                 Console.Write("\nTranslate \"{0}\" to {1}: ", fromLanguage, toLanguage);
                 string translation = Console.ReadLine().ToLower();
-                if (translation == " ")
+                if (translation == "")
                 {
                     condition = false;
                     break;

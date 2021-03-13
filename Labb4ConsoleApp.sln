@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31019.35
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Labb4", "Labb4\Labb4.csproj", "{847A4979-B981-4554-A9A3-CCA638960262}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Labb4", "Labb4\Labb4.csproj", "{847A4979-B981-4554-A9A3-CCA638960262}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClassLibrary", "ClassLibrary\ClassLibrary.csproj", "{778B73AD-CE66-46A7-BB3D-821E7CD6FA7D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClassLibrary", "ClassLibrary\ClassLibrary.csproj", "{778B73AD-CE66-46A7-BB3D-821E7CD6FA7D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
