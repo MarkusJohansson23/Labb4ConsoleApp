@@ -128,7 +128,7 @@ namespace Labb4
                             }
                             break;
                         case "-remove":
-                            if (parameters.Length > 1)
+                            if (parameters.Lengthif(parameters.Length > 1)
                             {
 
                             }
@@ -137,7 +137,10 @@ namespace Labb4
                                 Console.Write("Input list name without the .dat extension: ");
                                 string name = Console.ReadLine();
                                 var wordList = WordList.LoadList(name);
-                                //wordToRemove[0].ToUpper() + wordToRemove[]
+                                RemoveWordsPrompt(wordList);
+                                SavePrompt(wordList);
+                                Console.WriteLine(new string('-', 100));
+                                ShowOptions();
                             }
                             break;
                         case "-words":
