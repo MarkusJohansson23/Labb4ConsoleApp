@@ -9,10 +9,10 @@ namespace Labb4
     {
         static void Main(string[] args)
         {
-            //var testListMethod = WordList.LoadList("example-kopia");
-            //Action<string[]> testAction = new Action<string[]>(ShowTranslations);
-            //testListMethod.List(1, testAction);
-            //Console.ReadKey();
+            var testListMethod = WordList.LoadList("example-kopia");
+            Action<string[]> testAction = new Action<string[]>(ShowTranslations);
+            testListMethod.List(1, testAction);
+            Console.ReadKey();
             //Console Application
             if (!Directory.Exists(WordList.folder))
                 Directory.CreateDirectory(WordList.folder);
@@ -128,22 +128,56 @@ namespace Labb4
                             }
                             break;
                         case "-remove":
-                            if (parameters.Lengthif(parameters.Length > 1)
+                            if (parameters.Length > 2)
                             {
+                                var wordList = WordList.LoadList(fileName);
+                                if (parameters.Length == 3)
+                                {
+                                    RemoveWordsPrompt(wordList, parameters[2]);
+                                    SavePrompt(wordList);
+                                }
+                                else
+                                {
+                                    var test = parameters[2..(parameters.Length)];
+                                    RemoveWordsPrompt(wordList, parameters[2..(parameters.Length)]);
+                                    SavePrompt(wordList);
+                                }
 
+                                Console.WriteLine(new string('-', 100));
+                                ShowOptions();
+                            }
+                            else if (parameters.Length == 2)
+                            {
+                                var wordList = WordList.LoadList(fileName);
+                                Console.Write("Input language: ");
+                                string language = Console.ReadLine().ToLower();
+                                RemoveWordsPrompt(wordList, language);
+                                SavePrompt(wordList);
+                                Console.WriteLine(new string('-', 100));
+                                ShowOptions();
                             }
                             else
                             {
                                 Console.Write("Input list name without the .dat extension: ");
                                 string name = Console.ReadLine();
                                 var wordList = WordList.LoadList(name);
-                                RemoveWordsPrompt(wordList);
+                                Console.Write("Input language: ");
+                                string language = Console.ReadLine().ToLower();
+                                RemoveWordsPrompt(wordList, language);
                                 SavePrompt(wordList);
                                 Console.WriteLine(new string('-', 100));
                                 ShowOptions();
                             }
                             break;
                         case "-words":
+                            if (parameters.Length > 1)
+                            {
+
+                            }
+                            else
+                            {
+
+                            }
                             break;
                         case "-count":
                             if (parameters.Length > 1)
@@ -197,28 +231,36 @@ namespace Labb4
                 }
                 catch (ArgumentNullException ane)
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("\n" + ane.Message);
+                    Console.ResetColor();
                     Console.WriteLine(new string('-', 100));
                     ShowOptions();
                 }
                 catch (ArgumentException ae)
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("\n" + ae.Message);
+                    Console.ResetColor();
                     Console.WriteLine(new string('-', 100));
                     ShowOptions();
                 }
                 catch (IndexOutOfRangeException ioore)
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("\n" + ioore.Message);
+                    Console.ResetColor();
                     Console.WriteLine(new string('-', 100));
                     ShowOptions();
                 }
                 catch (Exception e)
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("\n" + e.Message);
+                    Console.ResetColor();
                     Console.WriteLine(new string('-', 100));
                     ShowOptions();
-                } 
+                }
             }
         }
         private static void ShowOptions()
@@ -296,6 +338,73 @@ namespace Labb4
             {
                 Console.WriteLine("\n{0} Word objects added to the list", counter);
             }
+        }
+        private static void RemoveWordsPrompt(WordList wordList, params string[] args)
+        {
+            args = Array.ConvertAll(args, x => x.ToLower());
+
+            for (int i = 0; i < wordList.Languages.Length; i++)
+            {
+                if (args[0] == wordList.Languages[i])
+                {
+                    if (args.Length > 1)
+                    {
+                        for (int j = 1; j < args.Length; j++)
+                        {
+                            bool removedOrNot = wordList.Remove(i, args[j]);
+                            if (removedOrNot == true)
+                            {
+                                Console.Write("The word ");
+                                Console.ForegroundColor = ConsoleColor.Green;
+                                Console.Write($"\"{args[j]}\"");
+                                Console.ResetColor();
+                                Console.WriteLine(" and its associated translations successfully removed");
+                            }
+                            else
+                            {
+                                Console.Write("Could not find ");
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.Write($"\"{args[j]}\"");
+                                Console.ResetColor();
+                                Console.WriteLine(". Cannot remove word from list");
+                            }
+                        }
+                        Console.WriteLine();
+                    }
+
+                    bool condition = true;
+                    Console.WriteLine("Press \"enter\" to cancel the prompt below");
+                    while (condition)
+                    {
+                        Console.Write("\nInput a word in {0} that you want to remove: ", args[0]);
+                        string wordToRemove = Console.ReadLine().ToLower();
+                        if (wordToRemove == "")
+                        {
+                            condition = false;
+                            break;
+                        }
+                        bool removedOrNot = wordList.Remove(i, wordToRemove);
+                        if (removedOrNot == true)
+                        {
+                            Console.Write("The word ");
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.Write($"\"{wordToRemove}\"");
+                            Console.ResetColor();
+                            Console.WriteLine(" and its associated translations successfully removed");
+                        }
+                        else
+                        {
+                            Console.Write("Could not find ");
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.Write($"\"{wordToRemove}\"");
+                            Console.ResetColor();
+                            Console.WriteLine(". Cannot remove word from list");
+                        }
+                    }
+                    return;
+                }
+            }
+            throw new ArgumentException("Could not find language");
         }
         private static void PracticeWordsPrompt(WordList wordList)
         {
