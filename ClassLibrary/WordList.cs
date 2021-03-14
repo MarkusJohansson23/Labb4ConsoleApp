@@ -28,7 +28,7 @@ namespace ClassLibrary
         }
 
         //Methods
-        public static string[] GetLists()//Markus
+        public static string[] GetLists()
         {
             string[] files = Directory.GetFiles(folder, "*.dat", SearchOption.AllDirectories);
             string[] nameArray = new string[files.Length];
@@ -40,7 +40,7 @@ namespace ClassLibrary
                                   
             return nameArray;    //Returnerar array med namn på alla listor som finns lagrade (utan filändelsen). 
         }
-        public static WordList LoadList(string name)//Kamil
+        public static WordList LoadList(string name)
         {
             if (File.Exists(Path.Combine(folder, name + ".dat")))
             {
@@ -68,7 +68,7 @@ namespace ClassLibrary
                 throw new ArgumentException("Could not find path");
             }
         }
-        public void Save()//Markus
+        public void Save()
         {
             using (var sw = new StreamWriter(Path.Combine(folder, Name + ".dat")))
             {
@@ -78,12 +78,9 @@ namespace ClassLibrary
                     sw.WriteLine(string.Join(";", Words[i].Translations));
                 }
             }
-            //Sparar listan till en fil med samma namn som listan och filändelse .dat
         }
-        public void Add(params string[] translations)//Kamil
+        public void Add(params string[] translations)
         {
-            //Lägger till ord i listan. Kasta ArgumentException om det är fel antal translations
-
             if (Words == null)
                 Words = new List<Word>();
 
@@ -100,12 +97,24 @@ namespace ClassLibrary
                 throw new ArgumentException("Invalid number of translations added");
             }
         }
-        public bool Remove(int translation, string word)//Markus
+        public bool Remove(int translation, string word)
         {
+            if(translation < 0 || translation > Languages.Length -1)
+            {
+                throw new ArgumentOutOfRangeException($"Index {translation} is out of range.");
+            }
+            
+            for (int i = 0; i < Words.Count; i++)
+            {
+                if (word.ToLower() == Words[i].Translations[translation])
+                {
+                    Words.Remove(Words[i]);
+                    return true;
+                }
+            }
             return false;
-            //translation motsvarar index i Languages. Sök igenom språket och ta bort ordet.
         }
-        public int Count()//Kamil
+        public int Count()
         {
             if (Words != null)
             {
@@ -115,10 +124,16 @@ namespace ClassLibrary
         }
         public void List(int sortByTranslation, Action<string[]> showTranslations)//markus
         {
-            //sortByTranslation = Vilket språk listan ska sorteras på.
-            //showTranslations = Callback som anropas för varje ord i listan.
+            if(sortByTranslation < 0 || sortByTranslation >= Languages.Count())
+            {
+                throw new ArgumentOutOfRangeException($"Index {sortByTranslation} is out of range.");
+            }
+            foreach(Word word in Words.OrderBy(w => w.Translations[sortByTranslation]).ToList())
+            {
+                showTranslations?.Invoke(word.Translations);
+            }
         }
-        public Word GetWordToPractice()//Kamil
+        public Word GetWordToPractice()
         {
             Random rng = new Random();
             if (Words != null)

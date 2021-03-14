@@ -124,6 +124,20 @@ namespace Labb4
                             }
                             break;
                         case "-remove":
+                            if(parameters.Length > 1)
+                            {
+
+                            }
+                            else
+                            {
+                                Console.Write("Input list name without the .dat extension: ");
+                                string name = Console.ReadLine();
+                                var wordList = WordList.LoadList(name);
+                                RemoveWordsPrompt(wordList);
+                                SavePrompt(wordList);
+                                Console.WriteLine(new string('-', 100));
+                                ShowOptions();
+                            }
                             break;
                         case "-words":
                             break;
@@ -330,6 +344,39 @@ namespace Labb4
             {
                 Console.WriteLine("\nNo words were guessed");
             }
+        }
+        private static void RemoveWordsPrompt(WordList wordList)
+        {
+            int counter = 0;
+            bool condition = true;
+            Console.Write("Input language: ");
+            string language = Console.ReadLine().ToLower();
+            string wordToRemove = string.Empty;
+            int languageNumber = 0;
+            bool removedOrNot = false;
+
+            for (int i = 0; i < wordList.Languages.Length; i++)
+            {
+                if (language == wordList.Languages[i])
+                {
+                    Console.Write("What word do you want to remove? ");
+                    wordToRemove = Console.ReadLine().ToLower();
+                    languageNumber = i;
+                    removedOrNot = wordList.Remove(languageNumber, wordToRemove);
+                    break;
+                }
+            }
+            
+            if (removedOrNot == true)
+            {
+                Console.WriteLine($"The word \"{wordToRemove}\" and associated translations successfully removed.");
+            }
+            else
+            {
+                Console.WriteLine($"Could not find \"{wordToRemove}\". Word was not removed.");
+            }
+
+
         }
     }
 }
