@@ -9,10 +9,6 @@ namespace Labb4
     {
         static void Main(string[] args)
         {
-            var testListMethod = WordList.LoadList("example-kopia");
-            Action<string[]> testAction = new Action<string[]>(ShowTranslations);
-            testListMethod.List(1, testAction);
-            Console.ReadKey();
             //Console Application
             if (!Directory.Exists(WordList.folder))
                 Directory.CreateDirectory(WordList.folder);
@@ -172,11 +168,27 @@ namespace Labb4
                         case "-words":
                             if (parameters.Length > 1)
                             {
-
+                                string language = string.Empty;
+                                var wordList = WordList.LoadList(fileName);
+                                if (parameters.Length == 2)
+                                {
+                                    Console.Write("Input language: ");
+                                    language = Console.ReadLine().ToLower();
+                                }
+                                Console.WriteLine();
+                                SortWordListPrompt(wordList, language == string.Empty ? parameters[2] : language);
+                                Console.Write("Type \"-options\" to display options: ");
                             }
                             else
                             {
-
+                                Console.Write("Input list name without the .dat extension: ");
+                                string name = Console.ReadLine();
+                                var wordList = WordList.LoadList(name);
+                                Console.Write("Input language: ");
+                                string language = Console.ReadLine().ToLower();
+                                Console.WriteLine();
+                                SortWordListPrompt(wordList, language);
+                                Console.Write("Type \"-options\" to display options: ");
                             }
                             break;
                         case "-count":
@@ -406,6 +418,24 @@ namespace Labb4
             }
             throw new ArgumentException("Could not find language");
         }
+        private static void SortWordListPrompt(WordList wordList, string language)
+        {
+            Console.WriteLine(string.Join(", ", wordList.Languages));
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine(new string('-', 50));
+            Console.ResetColor();
+            for (int i = 0; i < wordList.Languages.Length; i++)
+            {
+                if (language == wordList.Languages[i])
+                {
+                    Action<string[]> action = new Action<string[]>(ShowTranslations);
+                    wordList.List(i, action);
+                    Console.WriteLine(new string('-', 100));
+                    return;
+                }
+            }
+            throw new ArgumentException("Could not find language");
+        }
         private static void PracticeWordsPrompt(WordList wordList)
         {
             bool condition = true;
@@ -458,9 +488,9 @@ namespace Labb4
                 Console.WriteLine("\nNo words were guessed");
             }
         }
-        public static void ShowTranslations(string[] translations)
+        public static void ShowTranslations(string[] words)
         {
-            Console.WriteLine(string.Join(Environment.NewLine, translations));
+            Console.WriteLine(string.Join(", ", words));
         }
     }
 }

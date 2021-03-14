@@ -7,15 +7,15 @@ namespace ClassLibrary
     public class Word
     {
         //Auto-implemented properties
-        public string[] Translations { get; }   //Translations lagrar översättningarna, en för varje språk
-        public int FromLanguage { get; }        //Språk som ska översättas till respektive från
-        public int ToLanguage { get; }          //Språk som ska översättas till respektive från
+        public string[] Translations { get; }
+        public int FromLanguage { get; }
+        public int ToLanguage { get; }
 
         //Constructors
         public Word(params string[] translations)
         {
-            FromLanguage = 0;                               //Temp
-            ToLanguage = FromLanguage + 1;                  //Temp (out of range exception?)
+            FromLanguage = 0;
+            ToLanguage = FromLanguage + 1;        
             Translations = new string[translations.Length];
             for (int i = 0; i < translations.Length; i++)
             {
