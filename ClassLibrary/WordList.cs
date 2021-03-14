@@ -99,11 +99,11 @@ namespace ClassLibrary
         }
         public bool Remove(int translation, string word)
         {
-            if(translation < 0 || translation > Languages.Length -1)
+            if (translation < 0 || translation > Languages.Length - 1)
             {
-                throw new ArgumentOutOfRangeException($"Index {translation} is out of range.");
+                throw new ArgumentOutOfRangeException($"Index {translation} is out of range");
             }
-            
+
             for (int i = 0; i < Words.Count; i++)
             {
                 if (word.ToLower() == Words[i].Translations[translation])
@@ -122,10 +122,17 @@ namespace ClassLibrary
             }
             return 0;
         }
-        public void List(int sortByTranslation, Action<string[]> showTranslations)//markus
+        public void List(int sortByTranslation, Action<string[]> showTranslations)
         {
-            //sortByTranslation = Vilket språk listan ska sorteras på.
-            //showTranslations = Callback som anropas för varje ord i listan.
+            if (sortByTranslation < 0 || sortByTranslation > Languages.Count() - 1)
+            {
+                throw new ArgumentOutOfRangeException($"Index {sortByTranslation} is out of range");
+            }
+
+            foreach (var word in Words.OrderBy(w => w.Translations[sortByTranslation]).ToList())
+            {
+                showTranslations?.Invoke(word.Translations);
+            }
         }
         public Word GetWordToPractice()
         {
