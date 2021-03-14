@@ -9,6 +9,10 @@ namespace Labb4
     {
         static void Main(string[] args)
         {
+            //var testListMethod = WordList.LoadList("example-kopia");
+            //Action<string[]> testAction = new Action<string[]>(ShowTranslations);
+            //testListMethod.List(1, testAction);
+            //Console.ReadKey();
             //Console Application
             if (!Directory.Exists(WordList.folder))
                 Directory.CreateDirectory(WordList.folder);
@@ -124,6 +128,17 @@ namespace Labb4
                             }
                             break;
                         case "-remove":
+                            if (parameters.Length > 1)
+                            {
+
+                            }
+                            else
+                            {
+                                Console.Write("Input list name without the .dat extension: ");
+                                string name = Console.ReadLine();
+                                var wordList = WordList.LoadList(name);
+                                //wordToRemove[0].ToUpper() + wordToRemove[]
+                            }
                             break;
                         case "-words":
                             break;
@@ -330,6 +345,10 @@ namespace Labb4
             {
                 Console.WriteLine("\nNo words were guessed");
             }
+        }
+        public static void ShowTranslations(string[] translations)
+        {
+            Console.WriteLine(string.Join(Environment.NewLine, translations));
         }
     }
 }
