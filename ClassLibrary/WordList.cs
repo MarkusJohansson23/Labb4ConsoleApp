@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace ClassLibrary
 {
     public class WordList
     {
-        //Fields
-        private static readonly string folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Labb4WorkShopApp"); //TODO: Change Labb4WorkShopApp
+        //Read-only field
+        public static readonly string folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Labb4WorkShopApp"); //TODO: Change Labb4WorkShopApp
 
         //Auto-implemented properties
-        public string Name { get; }                     //Namnet på listan
-        public string[] Languages { get; }              //Namnen på språken
-        private List<Word> Words { get; set; }          //Lista av typ Word
+        public string Name { get; }
+        public string[] Languages { get; }
+        private List<Word> Words { get; set; }
 
         //Constructor
         public WordList(string name, params string[] languages)
@@ -22,7 +23,7 @@ namespace ClassLibrary
             Languages = new string[languages.Length];
             for (int i = 0; i < languages.Length; i++)
             {
-                Languages[i] = languages[i];
+                Languages[i] = languages[i].ToLower();
             }
         }
 
@@ -36,39 +37,39 @@ namespace ClassLibrary
             {
                 nameArray[i] = Path.GetFileNameWithoutExtension(files[i]);
             }
-
+                                  
             return nameArray;    //Returnerar array med namn på alla listor som finns lagrade (utan filändelsen). 
         }
-        public static WordList LoadList(string name)// Kamil
+        public static WordList LoadList(string name)//Kamil
         {
             if (File.Exists(Path.Combine(folder, name + ".dat")))
             {
                 string[] content = File.ReadAllLines(Path.Combine(folder, name + ".dat"));
-                string[] languages = content[0].Split(';', StringSplitOptions.RemoveEmptyEntries);
-                WordList wordList = new WordList(name, languages);
-                wordList.Words = new List<Word>();
-
-                for (int i = 1; i < content.Length; i++)
+                if (content.Length > 0)
                 {
-                    wordList.Words.Add(new Word(content[i].Split(';', StringSplitOptions.RemoveEmptyEntries)));
-                }
+                    string[] languages = content[0].Split(';', StringSplitOptions.RemoveEmptyEntries);
+                    WordList wordList = new WordList(name, languages);
+                    wordList.Words = new List<Word>();
 
-                return wordList;    //Laddar in ordlistan (name anges utan filändelse) och returnerar som WordList.
+                    for (int i = 1; i < content.Length; i++)
+                    {
+                        wordList.Words.Add(new Word(content[i].Split(';', StringSplitOptions.RemoveEmptyEntries)));
+                    }
+
+                    return wordList;    //Laddar in ordlistan (name anges utan filändelse) och returnerar som WordList.
+                }
+                else
+                {
+                    throw new IndexOutOfRangeException("Cannot read file. The file is empty");
+                }
             }
             else
             {
-                Console.WriteLine("The file does not exist"); //Fix later
-
-                return new WordList("Test", "Test");
+                throw new ArgumentException("Could not find path");
             }
         }
         public void Save()//Markus
         {
-            if (!File.Exists(Path.Combine(folder, Name + ".dat")))
-            {
-                File.Create(Path.Combine(folder, Name + ".dat"));
-            }
-
             using (var sw = new StreamWriter(Path.Combine(folder, Name + ".dat")))
             {
                 sw.WriteLine(string.Join(";", Languages));
@@ -77,30 +78,40 @@ namespace ClassLibrary
                     sw.WriteLine(string.Join(";", Words[i].Translations));
                 }
             }
-
             //Sparar listan till en fil med samma namn som listan och filändelse .dat
         }
         public void Add(params string[] translations)//Kamil
         {
-            //Lägger till ord i listan. Kasta ArgumentException om det är fel antal translations.
-            Console.WriteLine("Enter a new word in {0}", Languages[0]);
-            using (var sw = new StreamWriter(Name, true))
+            //Lägger till ord i listan. Kasta ArgumentException om det är fel antal translations
+
+            if (Words == null)
+                Words = new List<Word>();
+
+            translations = translations.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+            translations = translations.Select(x => x.Trim()).ToArray();
+            translations = translations.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+
+            if (translations.Length == Languages.Length)
             {
-                foreach (var tranlation in translations)
-                {
-
-                }
+                Words.Add(new Word(translations.Select(x => x.ToLower()).ToArray()));
             }
-            throw new ArgumentException("Incorrect number of translations added");
+            else
+            {
+                throw new ArgumentException("Invalid number of translations added");
+            }
         }
-        public bool Remove(int translation, string word)//markus
+        public bool Remove(int translation, string word)//Markus
         {
-
-            return false;                                       //translation motsvarar index i Languages. Sök igenom språket och ta bort ordet.
+            return false;
+            //translation motsvarar index i Languages. Sök igenom språket och ta bort ordet.
         }
         public int Count()//Kamil
         {
-            return 0;                                           //Räknar och returnerar antal ord i listan.
+            if (Words != null)
+            {
+                return Words.Count;
+            }
+            return 0;
         }
         public void List(int sortByTranslation, Action<string[]> showTranslations)//markus
         {
@@ -109,8 +120,19 @@ namespace ClassLibrary
         }
         public Word GetWordToPractice()//Kamil
         {
-            return new Word("Test");                            //Returnerar slumpmässigt Word från listan, med slumpmässigt valda FromLanguage och ToLanguage(dock inte samma).
-
+            Random rng = new Random();
+            if (Words != null)
+            {
+                int fromLanguages = rng.Next(Languages.Length), toLanguages = rng.Next(Languages.Length);
+                while (fromLanguages == toLanguages)
+                {
+                    fromLanguages = rng.Next(Languages.Length);
+                    toLanguages = rng.Next(Languages.Length);
+                }
+                return new Word(fromLanguages, toLanguages, Words[rng.Next(Words.Count)].Translations);
+            }
+            //Returnerar slumpmässigt Word från listan, med slumpmässigt valda FromLanguage och ToLanguage(dock inte samma).
+            throw new ArgumentNullException("No Word objects found");                            
         }
     }
 }
