@@ -31,10 +31,10 @@ namespace Labb4
             Console.WriteLine("-practice <listname>");
             Console.WriteLine();
             var testTest = new WordList("example1", "swedish", "english");
-            testTest.Add("bla bla");
+            //testTest.Add("bla bla");
             var test = WordList.LoadList("example - kopia");
 
-            
+            test.Save();
             
             Console.ReadKey();
         }

@@ -95,6 +95,7 @@ namespace ClassLibrary
         }
         public bool Remove(int translation, string word)//markus
         {
+
             return false;                                       //translation motsvarar index i Languages. Sök igenom språket och ta bort ordet.
         }
         public int Count()//Kamil
