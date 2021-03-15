@@ -43,6 +43,7 @@ namespace Labb4
 
                     switch (parameters[0])
                     {
+                        case "-list":
                         case "-lists":
                             Console.WriteLine(string.Join(Environment.NewLine, WordList.GetLists()));
                             Console.WriteLine(new string('-', 100));
