@@ -425,7 +425,7 @@ namespace Labb4
         {
             Console.WriteLine(string.Join(", ", wordList.Languages));
             Console.ForegroundColor = ConsoleColor.DarkGray;
-            Console.WriteLine(new string('-', 50));
+            Console.WriteLine(new string('-', 100));
             Console.ResetColor();
             for (int i = 0; i < wordList.Languages.Length; i++)
             {
