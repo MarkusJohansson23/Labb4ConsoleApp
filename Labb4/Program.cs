@@ -166,6 +166,7 @@ namespace Labb4
                                 ShowOptions();
                             }
                             break;
+                        case "-word":
                         case "-words":
                             if (parameters.Length > 1)
                             {
@@ -226,6 +227,7 @@ namespace Labb4
                                 ShowOptions();
                             }
                             break;
+                        case "-option":
                         case "-options":
                             ShowOptions();
                             break;
